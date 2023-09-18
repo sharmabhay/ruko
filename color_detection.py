@@ -1,5 +1,6 @@
 import cv2
 import math
+import numpy as np
 import pandas as pd
 import argparse
 
@@ -33,13 +34,17 @@ def euclideanDistance(color1, color2):
 # function to calculate minimum distance from all colors and get the most matching color
 def getMatchingColor(clicked_rgb):
     minimum = 1000
-    cname = "Nothing"
-
+    cname = "Color"
     for i in range(len(csv)):
-        dist = euclideanDistance(clicked_rgb, csv.loc[i, "R", "G", "B"])   # TODO: Fix this "Too many indexers" error
-        if dist <= minimum:
-            minimum = dist
-            cname = csv.loc[i, "color_name"]
+        r2 = int(csv.loc[i, "R"])
+        g2 = int(csv.loc[i, "G"])
+        b2 = int(csv.loc[i, "B"])
+        file_rgb = (r2, g2, b2)
+
+        distance = euclideanDistance(clicked_rgb, file_rgb)
+        if distance <= minimum:
+            minimum = distance
+            cname = csv.loc[i, "color_name"]    # TODO: Update color name at every click
     return cname
 
 
@@ -55,7 +60,6 @@ def drawFunction(event, x, y, flags, param):
         g = int(g)
         b = int(b)
 
-
 cv2.namedWindow('image')
 cv2.setMouseCallback('image', drawFunction)
 
@@ -63,22 +67,22 @@ while True:
     cv2.imshow("image", img)
     if clicked:
         # cv2.rectangle(image, startpoint, endpoint, color, thickness)-1 fills entire rectangle
-        cv2.rectangle(img, (20, 20), (750, 60), (b, g, r), -1)
+        cv2.rectangle(img, (20,20), (750,60), (r,g,b), -1)
 
         # creating text string to display(Color name and RGB values)
         text = getMatchingColor(clicked_img) + ' R=' + str(r) + ' G=' + str(g) + ' B=' + str(b)
 
         # cv2.putText(img,text,start,font(0-7),fontScale,color,thickness,lineType)
-        cv2.putText(img, text, (50, 50), 2, 0.8, (255, 255, 255), 2, cv2.LINE_AA)
+        cv2.putText(img, text, (50,50), 2, 0.8, (255,255,255), 2, cv2.LINE_AA)
 
         # for very light colours, display text in black colour
         if r + g + b >= 600:
-            cv2.putText(img, text, (50, 50), 2, 0.8, (0, 0, 0), 2, cv2.LINE_AA)
+            cv2.putText(img, text, (50,50), 2, 0.8, (0,0,0), 2, cv2.LINE_AA)
 
         clicked = False
 
-    # break the loop when user hits 'esc' key
-    if cv2.waitKey(50) and 0xFF == 27:
+    # break the loop when user hits 'esc' or 'ctrl + c' key
+    if cv2.waitKey(50) and 0xFF == ord("q"):
         break
 
 cv2.destroyAllWindows()
