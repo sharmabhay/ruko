@@ -15,7 +15,6 @@ img = cv2.imread(img_path)
 # declaring global variables (used later on)
 clicked = False
 r = g = b = xpos = ypos = 0
-clicked_img = (r, g, b)
 
 # reading csv file with pandas and giving names to each column
 index = ["color", "color_name", "hex", "R", "G", "B"]
@@ -27,8 +26,7 @@ def getMatchingColor(red, green, blue):
     minimum = float("inf")
     cname = "Color"
     for i in range(0, len(csv)):
-        distance = np.sqrt((red - int(csv.loc[i, "R"])) ** 2 + (green - int(csv.loc[i, "G"])) ** 2 + (
-                    blue - int(csv.loc[i, "B"])) ** 2)
+        distance = np.sqrt((red - int(csv.loc[i, "R"]))**2 + (green - int(csv.loc[i, "G"]))**2 + (blue - int(csv.loc[i, "B"]))**2)
         if distance < minimum:
             minimum = distance
             cname = csv.loc[i, "color_name"]
@@ -54,18 +52,18 @@ cv2.setMouseCallback('image', drawFunction)
 while True:
     cv2.imshow("image", img)
     if clicked:
-        # cv2.rectangle(image, startpoint, endpoint, color, thickness)-1 fills entire rectangle
-        cv2.rectangle(img, (20, 20), (750, 60), (b, g, r), -1)
+        # cv2.rectangle(image, startpoint, endpoint, color, thickness) -1 fills entire rectangle
+        cv2.rectangle(img, (20,20), (750,60), (b,g,r), -1)
 
         # creating text string to display(Color name and RGB values)
         text = getMatchingColor(r, g, b) + ' R=' + str(r) + ' G=' + str(g) + ' B=' + str(b)
 
         # cv2.putText(img,text,start,font(0-7),fontScale,color,thickness,lineType)
-        cv2.putText(img, text, (50, 50), 2, 0.8, (255, 255, 255), 2, cv2.LINE_AA)
+        cv2.putText(img, text, (50,50), 2, 0.8, (255,255,255), 2, cv2.LINE_AA)
 
         # for very light colors, display text in black color
         if r + g + b >= 500:
-            cv2.putText(img, text, (50, 50), 2, 0.8, (0, 0, 0), 2, cv2.LINE_AA)
+            cv2.putText(img, text, (50,50), 2, 0.8, (0,0,0), 2, cv2.LINE_AA)
 
         clicked = False
 
